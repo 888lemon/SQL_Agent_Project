@@ -1,0 +1,228 @@
+Categories:
+  description: 产品类别目录，记录商品分类名称和类别说明。
+  aliases:
+    - 类别
+    - 商品分类
+    - 品类
+  columns:
+    CategoryID: 类别主键
+    CategoryName: 类别名称
+    Description: 类别描述
+    Picture: 类别图片二进制数据
+
+CustomerCustomerDemo:
+  description: 客户与客户类型的关联表，用于标记客户所属人群或标签。
+  aliases:
+    - 客户标签
+    - 客户类型映射
+  columns:
+    CustomerID: 客户主键
+    CustomerTypeID: 客户类型主键
+
+CustomerDemographics:
+  description: 客户类型字典表，描述客户细分或客户画像。
+  aliases:
+    - 客户类型
+    - 客户画像
+  columns:
+    CustomerTypeID: 客户类型主键
+    CustomerDesc: 客户类型描述
+
+Customers:
+  description: 客户信息表，存储客户公司名称、联系人、地区和联系方式。
+  aliases:
+    - 客户
+    - 买家
+    - 公司客户
+  columns:
+    CustomerID: 客户主键
+    CompanyName: 客户公司名称
+    ContactName: 客户联系人
+    ContactTitle: 联系人职位
+    Address: 客户地址
+    City: 客户所在城市
+    Region: 客户所在区域
+    PostalCode: 邮编
+    Country: 国家
+    Phone: 电话
+    Fax: 传真
+
+EmployeeTerritories:
+  description: 员工与销售区域的映射关系表。
+  aliases:
+    - 员工区域
+    - 销售辖区映射
+  columns:
+    EmployeeID: 员工主键
+    TerritoryID: 销售区域主键
+
+Employees:
+  description: 员工信息表，记录销售人员和组织层级信息。
+  aliases:
+    - 员工
+    - 雇员
+    - 销售人员
+    - 业务员
+  columns:
+    EmployeeID: 员工主键
+    LastName: 姓
+    FirstName: 名
+    Title: 职位
+    TitleOfCourtesy: 称谓
+    BirthDate: 出生日期
+    HireDate: 入职日期
+    Address: 地址
+    City: 城市
+    Region: 区域
+    PostalCode: 邮编
+    Country: 国家
+    HomePhone: 家庭电话
+    Extension: 分机号
+    Photo: 照片
+    Notes: 备注
+    ReportsTo: 上级员工ID
+    PhotoPath: 照片路径
+
+Order Details:
+  description: 订单明细表，记录每个订单中的产品、数量、成交单价和折扣。
+  aliases:
+    - 订单明细
+    - 销售明细
+    - 成交明细
+    - 订单商品
+  columns:
+    OrderID: 订单主键
+    ProductID: 产品主键
+    UnitPrice: 成交单价
+    Quantity: 销售数量
+    Discount: 折扣比例
+
+Orders:
+  description: 订单主表，记录客户、销售员工、下单时间和物流信息。
+  aliases:
+    - 订单
+    - 销售订单
+    - 交易
+    - 销售单
+  columns:
+    OrderID: 订单主键
+    CustomerID: 客户主键
+    EmployeeID: 销售员工主键
+    OrderDate: 下单日期
+    RequiredDate: 要求到货日期
+    ShippedDate: 发货日期
+    ShipVia: 承运商主键
+    Freight: 运费
+    ShipName: 收货名称
+    ShipAddress: 收货地址
+    ShipCity: 收货城市
+    ShipRegion: 收货区域
+    ShipPostalCode: 收货邮编
+    ShipCountry: 收货国家
+
+Products:
+  description: 产品信息表，记录商品名称、供应商、分类、价格和库存。
+  aliases:
+    - 产品
+    - 商品
+    - SKU
+    - 货品
+  columns:
+    ProductID: 产品主键
+    ProductName: 产品名称
+    SupplierID: 供应商主键
+    CategoryID: 类别主键
+    QuantityPerUnit: 计量规格
+    UnitPrice: 标准单价
+    UnitsInStock: 库存数量
+    UnitsOnOrder: 在途订单数量
+    ReorderLevel: 补货警戒线
+    Discontinued: 是否停产
+
+Regions:
+  description: 大区字典表，记录区域编号与名称。
+  aliases:
+    - 大区
+    - 区域
+  columns:
+    RegionID: 大区主键
+    RegionDescription: 大区名称
+
+Shippers:
+  description: 物流承运商信息表。
+  aliases:
+    - 承运商
+    - 物流公司
+    - 快递
+  columns:
+    ShipperID: 承运商主键
+    CompanyName: 承运商名称
+    Phone: 电话
+
+Suppliers:
+  description: 供应商信息表，记录供应商公司、联系人和地区信息。
+  aliases:
+    - 供应商
+    - 供货商
+    - 厂商
+  columns:
+    SupplierID: 供应商主键
+    CompanyName: 供应商公司名称
+    ContactName: 联系人
+    ContactTitle: 联系人职位
+    Address: 地址
+    City: 城市
+    Region: 区域
+    PostalCode: 邮编
+    Country: 国家
+    Phone: 电话
+    Fax: 传真
+    HomePage: 主页
+
+Territories:
+  description: 销售辖区表，记录销售区域及其所属大区。
+  aliases:
+    - 销售区域
+    - 辖区
+  columns:
+    TerritoryID: 销售区域主键
+    TerritoryDescription: 销售区域名称
+    RegionID: 所属大区主键
+
+metrics:
+  sales_amount:
+    aliases:
+      - 销售额
+      - 营收
+      - 业绩
+      - 成交额
+      - 销售金额
+    formula: Order Details.UnitPrice * Order Details.Quantity * (1 - Order Details.Discount)
+    tables:
+      - Orders
+      - Order Details
+      - Employees
+      - Customers
+      - Products
+  order_count:
+    aliases:
+      - 订单量
+      - 订单数
+      - 成交单数
+    formula: COUNT(DISTINCT Orders.OrderID)
+    tables:
+      - Orders
+      - Customers
+      - Employees
+  inventory:
+    aliases:
+      - 库存
+      - 存货
+      - 库存量
+      - 缺货
+      - 补货
+    formula: Products.UnitsInStock / Products.ReorderLevel / Products.UnitsOnOrder
+    tables:
+      - Products
+      - Suppliers
+      - Categories

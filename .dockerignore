@@ -1,0 +1,27 @@
+# 1. 忽略所有可能的虚拟环境目录 (这是瘦身的重点)
+.venv/
+venv/
+env/
+bin/
+lib/
+share/
+
+# 2. 忽略 Python 缓存和编译文件
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 3. 忽略版本控制和编辑器配置
+.git/
+.gitignore
+.ipynb_checkpoints/
+.vscode/
+.idea/
+.env
+
+# 4. 忽略本地数据库和日志
+*.db
+*.db-journal
+*.log
+!app/data/northwind.db

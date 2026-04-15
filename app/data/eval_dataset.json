@@ -1,0 +1,132 @@
+[
+  {
+    "id": "employee_top_sales",
+    "question": "哪个雇员的销售额最高？",
+    "expected_tables": ["Employees", "Orders", "Order Details"],
+    "expected_columns": [
+      {"table": "Employees", "column": "EmployeeID"},
+      {"table": "Employees", "column": "FirstName"},
+      {"table": "Employees", "column": "LastName"},
+      {"table": "Orders", "column": "EmployeeID"},
+      {"table": "Orders", "column": "OrderDate"},
+      {"table": "Order Details", "column": "UnitPrice"},
+      {"table": "Order Details", "column": "Quantity"},
+      {"table": "Order Details", "column": "Discount"}
+    ],
+    "expected_metrics": ["sales_amount"],
+    "expected_joins": [
+      "Join path: Orders.EmployeeID = Employees.EmployeeID",
+      "Join path: Order Details.OrderID = Orders.OrderID"
+    ],
+    "reference_sql": "SELECT e.FirstName, e.LastName, SUM(od.UnitPrice * od.Quantity * (1 - od.Discount)) AS TotalSales FROM Employees e JOIN Orders o ON e.EmployeeID = o.EmployeeID JOIN [Order Details] od ON o.OrderID = od.OrderID GROUP BY e.EmployeeID ORDER BY TotalSales DESC LIMIT 1;"
+  },
+  {
+    "id": "low_inventory_products",
+    "question": "哪些产品的库存量低于警戒线？",
+    "expected_tables": ["Products"],
+    "expected_columns": [
+      {"table": "Products", "column": "ProductName"},
+      {"table": "Products", "column": "UnitsInStock"},
+      {"table": "Products", "column": "ReorderLevel"},
+      {"table": "Products", "column": "Discontinued"}
+    ],
+    "expected_metrics": ["inventory"],
+    "expected_joins": [],
+    "reference_sql": "SELECT ProductName, UnitsInStock, ReorderLevel FROM Products WHERE UnitsInStock < ReorderLevel AND Discontinued = 0;"
+  },
+  {
+    "id": "seafood_suppliers",
+    "question": "Seafood 类别的供应商有哪些？",
+    "expected_tables": ["Categories", "Products", "Suppliers"],
+    "expected_columns": [
+      {"table": "Categories", "column": "CategoryName"},
+      {"table": "Products", "column": "CategoryID"},
+      {"table": "Products", "column": "SupplierID"},
+      {"table": "Suppliers", "column": "CompanyName"}
+    ],
+    "expected_metrics": [],
+    "expected_joins": [
+      "Join path: Products.CategoryID = Categories.CategoryID",
+      "Join path: Products.SupplierID = Suppliers.SupplierID"
+    ],
+    "reference_sql": "SELECT DISTINCT s.CompanyName FROM Suppliers s JOIN Products p ON s.SupplierID = p.SupplierID JOIN Categories c ON p.CategoryID = c.CategoryID WHERE c.CategoryName = 'Seafood';"
+  },
+  {
+    "id": "customer_order_count",
+    "question": "订单量最高的客户是谁？",
+    "expected_tables": ["Customers", "Orders"],
+    "expected_columns": [
+      {"table": "Customers", "column": "CompanyName"},
+      {"table": "Orders", "column": "CustomerID"},
+      {"table": "Orders", "column": "OrderID"}
+    ],
+    "expected_metrics": ["order_count"],
+    "expected_joins": [
+      "Join path: Orders.CustomerID = Customers.CustomerID"
+    ],
+    "reference_sql": "SELECT c.CompanyName, COUNT(DISTINCT o.OrderID) AS OrderCount FROM Customers c JOIN Orders o ON c.CustomerID = o.CustomerID GROUP BY c.CustomerID ORDER BY OrderCount DESC LIMIT 1;"
+  },
+  {
+    "id": "sales_by_category",
+    "question": "每个产品类别的销售额是多少？",
+    "expected_tables": ["Categories", "Products", "Order Details"],
+    "expected_columns": [
+      {"table": "Categories", "column": "CategoryName"},
+      {"table": "Products", "column": "CategoryID"},
+      {"table": "Products", "column": "ProductID"},
+      {"table": "Order Details", "column": "ProductID"},
+      {"table": "Order Details", "column": "UnitPrice"},
+      {"table": "Order Details", "column": "Quantity"},
+      {"table": "Order Details", "column": "Discount"}
+    ],
+    "expected_metrics": ["sales_amount"],
+    "expected_joins": [
+      "Join path: Order Details.ProductID = Products.ProductID",
+      "Join path: Products.CategoryID = Categories.CategoryID"
+    ],
+    "reference_sql": "SELECT c.CategoryName, SUM(od.UnitPrice * od.Quantity * (1 - od.Discount)) AS TotalSales FROM Categories c JOIN Products p ON c.CategoryID = p.CategoryID JOIN [Order Details] od ON p.ProductID = od.ProductID GROUP BY c.CategoryID ORDER BY TotalSales DESC;"
+  },
+  {
+    "id": "shipper_order_count",
+    "question": "哪个物流公司承运的订单最多？",
+    "expected_tables": ["Orders", "Shippers"],
+    "expected_columns": [
+      {"table": "Orders", "column": "ShipVia"},
+      {"table": "Orders", "column": "OrderID"},
+      {"table": "Shippers", "column": "ShipperID"},
+      {"table": "Shippers", "column": "CompanyName"}
+    ],
+    "expected_metrics": ["order_count"],
+    "expected_joins": [
+      "Join path: Orders.ShipVia = Shippers.ShipperID"
+    ],
+    "reference_sql": "SELECT s.CompanyName, COUNT(o.OrderID) AS OrderCount FROM Shippers s JOIN Orders o ON s.ShipperID = o.ShipVia GROUP BY s.ShipperID ORDER BY OrderCount DESC LIMIT 1;"
+  },
+  {
+    "id": "supplier_product_count",
+    "question": "每个供应商提供了多少种产品？",
+    "expected_tables": ["Products", "Suppliers"],
+    "expected_columns": [
+      {"table": "Products", "column": "SupplierID"},
+      {"table": "Products", "column": "ProductID"},
+      {"table": "Suppliers", "column": "CompanyName"}
+    ],
+    "expected_metrics": [],
+    "expected_joins": [
+      "Join path: Products.SupplierID = Suppliers.SupplierID"
+    ],
+    "reference_sql": "SELECT s.CompanyName, COUNT(p.ProductID) AS ProductCount FROM Suppliers s JOIN Products p ON s.SupplierID = p.SupplierID GROUP BY s.SupplierID ORDER BY ProductCount DESC;"
+  },
+  {
+    "id": "orders_shipped_to_germany",
+    "question": "发货到德国的订单有多少？",
+    "expected_tables": ["Orders"],
+    "expected_columns": [
+      {"table": "Orders", "column": "OrderID"},
+      {"table": "Orders", "column": "ShipCountry"}
+    ],
+    "expected_metrics": ["order_count"],
+    "expected_joins": [],
+    "reference_sql": "SELECT COUNT(DISTINCT OrderID) AS OrderCount FROM Orders WHERE ShipCountry = 'Germany';"
+  }
+]

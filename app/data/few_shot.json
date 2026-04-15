@@ -1,0 +1,14 @@
+[
+    {
+        "question": "哪个雇员的销售额最高？",
+        "sql": "SELECT e.FirstName, e.LastName, SUM(od.UnitPrice * od.Quantity * (1 - od.Discount)) AS TotalSales FROM Employees e JOIN Orders o ON e.EmployeeID = o.EmployeeID JOIN [Order Details] od ON o.OrderID = od.OrderID WHERE o.OrderDate BETWEEN '1997-01-01' AND '1997-12-31' GROUP BY e.EmployeeID ORDER BY TotalSales DESC LIMIT 1;"
+    },
+    {
+        "question": "哪些产品的库存量低于警戒线？",
+        "sql": "SELECT ProductName, UnitsInStock, ReorderLevel FROM Products WHERE UnitsInStock < ReorderLevel AND Discontinued = 0;"
+    },
+    {
+        "question": "Seafood 类别的供应商有哪些？",
+        "sql": "SELECT DISTINCT s.CompanyName FROM Suppliers s JOIN Products p ON s.SupplierID = p.SupplierID JOIN Categories c ON p.CategoryID = c.CategoryID WHERE c.CategoryName = 'Seafood';"
+    }
+]
