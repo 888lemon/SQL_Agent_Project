@@ -1,4 +1,4 @@
-# SQL-Pro-Agent
+# SQL-Agent
 
 工业级自愈式 Text-to-SQL 智能体。  
 项目支持自然语言问数、动态 Schema 检索、SQL 安全审计、自动重试修复、语义缓存与离线评测。
